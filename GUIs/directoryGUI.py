@@ -3,11 +3,17 @@
 
 
 import sys
-from PyQt5.QtWidgets import (QVBoxLayout, QFileSystemModel, QTreeView,
-                             QApplication)
-from PyQt5.QtGui import QIcon
+import os
 
-from PyQt5.QtCore import QDir
+from PyQt5.QtWidgets import (QVBoxLayout, QFileSystemModel, QTreeView,
+                             QApplication, QLabel)
+from PyQt5.QtGui import QIcon, QFont
+
+from PyQt5.QtCore import QDir, QObject, pyqtSignal
+
+
+class Signal(QObject):
+    FileAdded = pyqtSignal()
 
 
 class DirView(QTreeView):
@@ -20,16 +26,24 @@ class DirView(QTreeView):
         self.setGeometry(300, 300, 600, 480)
         self.setWindowTitle('Home Directory View')
         self.setWindowIcon(QIcon('web.png'))
+        self.__definingtree()
+        self.__changestodirectory()
+        windowlayout = QVBoxLayout()
+        windowlayout.addWidget(self.tree)
+        windowlayout.addWidget(self.label)
+        self.setLayout(windowlayout)
+        self.show()
 
-
-        #set model attributes
+    def __creating_model(self):
+        # set model attributes
         self.model = QFileSystemModel()
         self.model.setRootPath(QDir.homePath())
+        return self.model
 
-
-        #define QTreeView as a QFileSystem model
+    def __definingtree(self):
+        # define QTreeView widget as a QFileSystem model
         self.tree = QTreeView()
-        self.tree.setModel(self.model)
+        self.tree.setModel(self.__creating_model())
         self.tree.setRootIndex(self.model.index(QDir.homePath()))
         self.tree.setAnimated(True)
         self.tree.setIndentation(20)
@@ -37,21 +51,22 @@ class DirView(QTreeView):
         self.tree.setWindowTitle("Dir View")
         self.tree.resize(600, 480)
 
-        #make path bold
-        self.doubleClicked.connect(self.__fileClicked)
+    def __changestodirectory(self):
+        self.directorychanged = Signal()
+        self.directorychanged.FileAdded.connect(self.__file_added_event)
 
-        #set properties of the window, display widget
-        windowLayout = QVBoxLayout()
-        windowLayout.addWidget(self.tree)
-        self.setLayout(windowLayout)
+    #this defines the signal
+    def __file_added_event(self, event):
+        with os.scandir(QDir.homePath()) as home_path:
+            for pathname in home_path:
+                if pathname.is_file() and max(home_path, key=os.path.getctime):
+                    print(pathname)
+                    myFont = QFont()
+                    myFont.setBold(True)
+                    self.label = QLabel(pathname, self)
+                    self.label.setFont(myFont)
+                    self.directorychanged.FileAdded.emit()
 
-    def __fileClicked(self, signal):
-        file_path = QDir.currentPath()
-        print(file_path)
-        '''        fname = QFileDialog.getOpenFileName(self, 'Open file', '/home')
-        if fname[0]:
-            self.myFont = QFont(fname[0])
-            self.myFont.setBold(enable=True) '''
 
 
 
@@ -59,5 +74,4 @@ class DirView(QTreeView):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     dv = DirView()
-    dv.show()
     sys.exit(app.exec_())
