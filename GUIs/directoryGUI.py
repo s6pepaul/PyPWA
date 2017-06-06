@@ -6,31 +6,40 @@ import sys
 import os
 
 from PyQt5.QtWidgets import (QVBoxLayout, QFileSystemModel, QTreeView,
-                             QApplication, QLabel)
-from PyQt5.QtGui import QIcon, QFont
+                             QApplication, QTextEdit, QSplitter, QPushButton)
+from PyQt5.QtGui import QIcon
 
-from PyQt5.QtCore import QDir, QObject, pyqtSignal
+from PyQt5.QtCore import QDir, QObject, pyqtSignal, Qt
 
-
-class Signal(QObject):
-    FileAdded = pyqtSignal()
+from filecmp import dircmp
 
 
 class DirView(QTreeView):
+    path = '/home/cjbanks/projects'
+    dir_diff = dircmp(path, path)
 
     def __init__(self):
         super(DirView, self).__init__()
         self.__initui()
 
     def __initui(self):
-        self.setGeometry(300, 300, 600, 480)
+        self.setGeometry(300, 300, 600, 580)
         self.setWindowTitle('Home Directory View')
         self.setWindowIcon(QIcon('web.png'))
         self.__definingtree()
-        self.__changestodirectory()
-        windowlayout = QVBoxLayout()
-        windowlayout.addWidget(self.tree)
-        windowlayout.addWidget(self.label)
+        self.textbox = QTextEdit()
+
+        btn = QPushButton('Recently Added Files', self)
+        btn.clicked.connect(self.__file_added_event)
+
+        splitter1 = QSplitter(Qt.Horizontal)
+        splitter1.addWidget(self.tree)
+        splitter1.addWidget(self.textbox)
+
+        windowlayout = QVBoxLayout(self)
+        windowlayout.addWidget(splitter1)
+        windowlayout.addWidget(btn)
+
         self.setLayout(windowlayout)
         self.show()
 
@@ -49,26 +58,15 @@ class DirView(QTreeView):
         self.tree.setIndentation(20)
         self.tree.setSortingEnabled(True)
         self.tree.setWindowTitle("Dir View")
-        self.tree.resize(600, 480)
 
-    def __changestodirectory(self):
-        self.directorychanged = Signal()
-        self.directorychanged.FileAdded.connect(self.__file_added_event)
-
-    #this defines the signal
-    def __file_added_event(self, event):
-        with os.scandir(QDir.homePath()) as home_path:
-            for pathname in home_path:
-                if pathname.is_file() and max(home_path, key=os.path.getctime):
-                    print(pathname)
-                    myFont = QFont()
-                    myFont.setBold(True)
-                    self.label = QLabel(pathname, self)
-                    self.label.setFont(myFont)
-                    self.directorychanged.FileAdded.emit()
-
-
-
+    # this defines the signal
+    def __file_added_event(self, dir_diff):
+        for filename in dir_diff.common_files:
+            if not dir_diff.common_files:
+                print(filename)
+                self.textbox.textCursor().insertText(filename+'\n')
+        for sub_dir in dir_diff.subdirs.values():
+            self.__file_added_event(sub_dir)
 
 
 if __name__ == '__main__':
