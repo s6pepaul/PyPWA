@@ -28,6 +28,8 @@ class DirectoryView(QTreeView):
     def __initui(self):
         self.__defining_tree()
         self.__old_files = self.__make_list_of_files()
+        self.new_file_display = QTextEdit()
+        self.new_file_display.setReadOnly(True)
         self.setLayout(self.__set_window_attributes())
         self.show()
 
@@ -55,6 +57,7 @@ class DirectoryView(QTreeView):
                     original_file_list.append(file.name)
         return original_file_list
 
+
     def __set_window_attributes(self):
         self.setGeometry(300, 300, 600, 580)       
         self.setWindowTitle('Home Directory View')
@@ -70,8 +73,7 @@ class DirectoryView(QTreeView):
     def __new_file_added_event(self):
         new_file_list = []                                                  
         path = QDir.homePath()
-        new_file_display = QTextEdit()
-        new_file_display.setReadOnly(True)
+
         with os.scandir(path) as updated_list_of_files:
             for file in updated_list_of_files:
                 if not file.name.startswith('.') and file.is_file():
@@ -79,19 +81,19 @@ class DirectoryView(QTreeView):
 
         for filename in new_file_list:
             if filename not in self.__old_files:
-                new_file_display.clear()
-                new_file_display.textCursor().insertText(filename + '\n')
+                self.new_file_display.clear()
+                self.new_file_display.textCursor().insertText(filename + '\n')
 
         if new_file_list == self.__old_files:
-            new_file_display.clear()
-            new_file_display.textCursor().insertText('No New Files \n')
+            self.new_file_display.clear()
+            self.new_file_display.textCursor().insertText('No New Files \n')
 
-        return new_file_display
+        return None
 
     def __make_splitter(self):
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.tree)                   
-        splitter.addWidget(self.__new_file_added_event())
+        splitter.addWidget(self.new_file_display)
         return splitter
 
 if __name__ == '__main__':
