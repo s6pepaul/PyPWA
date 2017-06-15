@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/)
 
 ## [Unreleased]
 ### Added
+ - DirectoryView Widget that notifies user when a file/directory is:
+ - created, modified or deleted.
 ### Changed
 ### Fixed
 ### Security
