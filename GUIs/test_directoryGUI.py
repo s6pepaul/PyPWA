@@ -1,32 +1,20 @@
 import os
-import PyQt5
 import pytest
-import sys
-import logging
-
-
-from PyQt5 import QtCore
+import time
 from GUIs import directoryGUI
-from testfixtures import LogCapture
-
-@pytest.fixture()
-def main_window():
-    return directoryGUI._MainWindow()
-
-
-def test_main_window_opens(qtbot, main_window):
-    qtbot.addWidget(main_window)
-    qtbot.waitExposed(main_window, timeout=1000)
+from watchdog import observers
 
 
 @pytest.fixture()
 def directory_view():
-    return directoryGUI._DirectoryView('.')
+    directory_view_object = directoryGUI.DirectoryView('.')
+    yield directory_view_object
+    del directory_view_object
 
 
 def test_directory_view(qtbot, directory_view):
     qtbot.addWidget(directory_view)
-    qtbot.waitExposed(directory_view, timeout=1000)
+    assert qtbot.waitExposed(directory_view, timeout=1000)
 
 
 @pytest.fixture()
@@ -36,11 +24,27 @@ def tree_viewer():
 
 def test_tree_opens(qtbot, tree_viewer):
     qtbot.addWidget(tree_viewer)
-    qtbot.waitExposed(tree_viewer, timeout=1000)
+    assert qtbot.waitExposed(tree_viewer, timeout=1000)
 
 
 @pytest.fixture()
-def text_box():
-    return directoryGUI._TextBoxHandler()
+def text_box_handler():
+    return directoryGUI._FileChangeHandler()
 
 
+@pytest.fixture()
+def dir_thread(text_box_handler):
+    directory_thread = observers.Observer()
+    directory_thread.schedule(text_box_handler, '.', recursive=True)
+    directory_thread.start()
+    yield text_box_handler
+    directory_thread.stop()
+
+
+def test_text_box_output(dir_thread):
+    # type: (directoryGUI._FileChangeHandler) -> None
+    with open('file2.txt', 'w+'):
+        os.rename('file2.txt', 'file3.txt')
+        os.remove('file3.txt')
+        time.sleep(.5)
+        assert 'file2.txt' in dir_thread.toPlainText()
