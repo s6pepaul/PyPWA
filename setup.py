@@ -33,6 +33,7 @@ requires = [
     "tabulate",      # Great aesthetic tables
     "appdirs",       # Attempts to find data locations
     "fuzzywuzzy",    # Fuzzes the user input
+    "watchdog",      # Tracks current directory for changes
     "python-Levenshtein",
     'enum34;python_version<"3.4"',
     'typing;python_version<"3.5"'
@@ -65,7 +66,7 @@ setup(
     keywords="PyPWA GeneralFitting Partial Wave Analysis Minimization",
     install_requires=requires,
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', "pytest-cov", "pytest-logging"],
+    tests_require=['pytest', "pytest-cov", "pytest-logging", "pytest-qt"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
