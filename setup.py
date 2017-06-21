@@ -49,7 +49,8 @@ requires = [
     "tabulate",      # Great aesthetic tables
     "appdirs",       # Attempts to find data locations
     "fuzzywuzzy",    # Fuzzes the user input
-    "python-Levenshtein"
+    "python-Levenshtein",
+    "watchdog"
 ]
 
 extras = dict()
@@ -58,7 +59,8 @@ tests = [
     'pytest',
     'pytest-runner',
     "pytest-cov",
-    "pytest-logging"
+    "pytest-logging",
+    "pytest-qt"
 ]
 
 # Handle differences in setuptools versions.

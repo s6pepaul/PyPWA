@@ -1,13 +1,13 @@
 import os
 import pytest
 import time
-from GUIs import directoryGUI
+from PyPWA.guis import directory
 from watchdog import observers
 
 
 @pytest.fixture()
 def directory_view():
-    directory_view_object = directoryGUI.DirectoryView('.')
+    directory_view_object = directory.DirectoryView('.')
     yield directory_view_object
     del directory_view_object
 
@@ -19,7 +19,7 @@ def test_directory_view(qtbot, directory_view):
 
 @pytest.fixture()
 def tree_viewer():
-    return directoryGUI._TreeInitialization('.')
+    return directory._TreeInitialization('.')
 
 
 def test_tree_opens(qtbot, tree_viewer):
@@ -29,7 +29,7 @@ def test_tree_opens(qtbot, tree_viewer):
 
 @pytest.fixture()
 def text_box_handler():
-    return directoryGUI._FileChangeHandler()
+    return directory._FileChangeHandler()
 
 
 @pytest.fixture()
