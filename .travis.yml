@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 language: python
 cache: pip
 python:
@@ -16,8 +16,6 @@ addons:
       - "build-essential"
       - "gfortran"
       - "libatlas-base-dev"
-      - "python-pyqt5"
-      - "python3-pyqt5"
 before_install:
   - python --version
   - uname -a
