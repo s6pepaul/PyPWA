@@ -19,11 +19,7 @@ import setuptools
 
 __author__ = "PyPWA Team and Contributors"
 __license__ = "GPLv3"
-<<<<<<< HEAD
-__version__ = "2.1.0"
-=======
 __version__ = "2.2.0-dev"
->>>>>>> 77b261e0d7beea1a86b02a06b9df047cba49af6d
 __email__ = "pypwa@jlab.org"
 __status__ = "development"
 
@@ -105,13 +101,8 @@ setuptools.setup(
     entry_points=entry_points,
     keywords="PyPWA GeneralFitting Partial Wave Analysis Minimization",
     install_requires=requires,
-<<<<<<< HEAD
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest', "pytest-cov", "pytest-logging", "pytest-qt"],
-=======
     tests_require=tests,
     extras_require=extras,
->>>>>>> 77b261e0d7beea1a86b02a06b9df047cba49af6d
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",

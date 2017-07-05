@@ -4,7 +4,6 @@ import time
 from PyPWA.guis import directory
 from watchdog import observers
 
-
 @pytest.fixture()
 def directory_view():
     directory_view_object = directory.DirectoryView('.')
@@ -42,8 +41,7 @@ def dir_thread(text_box_handler):
 
 
 def test_text_box_output(dir_thread):
-    # type: (directoryGUI._FileChangeHandler) -> None
-    with open('file2.txt', 'w+'):
+        open('file2.txt', 'w+')
         os.rename('file2.txt', 'file3.txt')
         os.remove('file3.txt')
         time.sleep(.5)
