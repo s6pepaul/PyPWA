@@ -56,7 +56,7 @@ install:
     - popd
     # PyQt5
     - tar xzf /downloads/PyQt5_gpl-5.8.2.tar.gz --keep-newer-files
-    - pushd PyQt5_gpl-5.8.2.tar.gz
+    - pushd PyQt5_gpl-5.8.2
     - python configure.py -c --confirm-license --no-designer-plugin -e QtCore -e QtGui -e QtTest
     - make
     - sudo make install
