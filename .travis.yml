@@ -32,39 +32,20 @@ before_install:
   - "pip install pytest-runner --upgrade"
   - "pip install pytest-cov --upgrade"
   - "pip install pytest-logging --upgrade"
-  - sudo mkdir -p /downloads
-  - sudo chmod a+rw /downloads
-  - curl -L http://sourceforge.net/projects/pyqt/files/sip/sip-4.16.5/sip-4.16.5.tar.gz -o /downloads/sip.tar.gz
-  - curl -L https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.8.2/PyQt5_gpl-5.8.2.tar.gz -o /downloads/PyQt5_gpl-5.8.2.tar.gz
-  # Builds
-  - sudo mkdir -p /builds
-  - sudo chmod a+rw /builds
-
+  - sudo apt-add-repository ppa:beineri/opt-qt551 -y
+  - sudo apt-get update
+  - sudo apt-get install qt-latest
+  - source /opt/qt55/bin/qt55-env.sh
 install:
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
-    - sudo apt-get install -y libqt5-dev
-    - sudo apt-get install -y mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
-    # Qt5
-    - pushd /builds
-    # SIP
-    - tar xzf /downloads/sip.tar.gz --keep-newer-files
-    - pushd sip-4.16.5
-    - python configure.py
-    - make
-    - sudo make install
-    - popd
-    # PyQt5
-    - tar xzf /downloads/PyQt5_gpl-5.8.2.tar.gz --keep-newer-files
-    - pushd PyQt5_gpl-5.8.2
-    - python configure.py -c --confirm-license --no-designer-plugin -e QtCore -e QtGui -e QtTest
-    - make
-    - sudo make install
-    - popd
-    # Builds Complete
-    - popd
-    - pip install -r requirements.txt
-    - "pip install -e ."
+  - sudo mkdir -p /builds && sudo chmod a+rw /builds
+  - sudo mkdir -p /downloads && sudo chmod a+rw /downloads
+  - curl -L -o /downloads/sip.tar.gz http://sourceforge.net/projects/pyqt/files/sip/sip-4.17/sip-4.17.tar.gz
+  - curl -L -o /downloads/pyqt.tar.gz http://skylink.dl.sourceforge.net/project/pyqt/PyQt5/PyQt-5.5.1/PyQt-gpl-5.5.1.tar.gz
+  - tar xzf /downloads/sip.tar.gz -C /builds --keep-newer-files
+  - tar xzf /downloads/pyqt.tar.gz -C /builds --keep-newer-files
+  - cd /builds/sip-4.17 && python configure.py && sudo make && sudo make install
+  - cd /builds/PyQt-gpl-5.5.1 && python configure.py --confirm-license && sudo make && sudo make install
+  - "pip install -e ."
 script: "py.test --cov=PyPWA tests/ -vvvv"
 after_success:
   - ls -a
