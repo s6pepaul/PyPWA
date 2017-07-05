@@ -1,4 +1,5 @@
 sudo: required
+dist: trusty
 language: python
 cache: pip
 python:
@@ -7,6 +8,8 @@ python:
   - "3.5"
   - "3.6"
   - "3.6-dev"
+virtualenv:
+  system_site_packages: true
 matrix:
   allow_failures:
     - python: "3.6-dev"
@@ -30,19 +33,9 @@ before_install:
   - "pip install pytest-runner --upgrade"
   - "pip install pytest-cov --upgrade"
   - "pip install pytest-logging --upgrade"
-  - sudo apt-add-repository ppa:beineri/opt-qt551 -y
-  - sudo apt-get update
-  - sudo apt-get install qt-latest
-  - source /opt/qt55/bin/qt55-env.sh
 install:
-  - sudo mkdir -p /builds && sudo chmod a+rw /builds
-  - sudo mkdir -p /downloads && sudo chmod a+rw /downloads
-  - curl -L -o /downloads/sip.tar.gz http://sourceforge.net/projects/pyqt/files/sip/sip-4.17/sip-4.17.tar.gz
-  - curl -L -o /downloads/pyqt.tar.gz http://skylink.dl.sourceforge.net/project/pyqt/PyQt5/PyQt-5.5.1/PyQt-gpl-5.5.1.tar.gz
-  - tar xzf /downloads/sip.tar.gz -C /builds --keep-newer-files
-  - tar xzf /downloads/pyqt.tar.gz -C /builds --keep-newer-files
-  - cd /builds/sip-4.17 && python configure.py && sudo make && sudo make install
-  - cd /builds/PyQt-gpl-5.5.1 && python configure.py --confirm-license && sudo make && sudo make install
+  - sudo apt-get update
+  - sudo apt-get -y install python3-pyqt5
   - "pip install -e ."
 script: "py.test --cov=PyPWA tests/ -vvvv"
 after_success:
