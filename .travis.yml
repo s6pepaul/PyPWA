@@ -1,50 +1,31 @@
-sudo: required
+sudo: false
 language: python
-cache: pip
+cache:
+  apt: true
+  directories:
+  - $HOME/.cache/pip
 python:
   - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
-  - "3.6-dev"
-matrix:
-  allow_failures:
-    - python: "3.6-dev"
-addons:
-  apt:
-    packages:
-      - "build-essential"
-      - "gfortran"
-      - "libatlas-base-dev"
 before_install:
-  - python --version
-  - uname -a
-  - ls -a
-  - "pip install --upgrade pip setuptools wheel"
-  - "pip install --upgrade numpy scipy"
-  - "pip install --upgrade iminuit nestle ruamel.yaml tabulate appdirs"
-  - "pip install --upgrade fuzzywuzzy python-Levenshtein"
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda3/bin:$PATH
+  - hash -r
+  - conda update --yes conda
+install:
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pyqt numpy scipy matplotlib
+  - conda info -a
   - "pip install coveralls --upgrade"
   - "pip install coverage --upgrade"
   - "pip install pytest --upgrade"
   - "pip install pytest-runner --upgrade"
   - "pip install pytest-cov --upgrade"
   - "pip install pytest-logging --upgrade"
-  - sudo apt-add-repository ppa:beineri/opt-qt551 -y
-  - sudo apt-get update
-  - sudo apt-get install qt-latest
-  - source /opt/qt55/bin/qt55-env.sh
-install:
-  - sudo mkdir -p /builds && sudo chmod a+rw /builds
-  - sudo mkdir -p /downloads && sudo chmod a+rw /downloads
-  - curl -L -o /downloads/sip.tar.gz http://sourceforge.net/projects/pyqt/files/sip/sip-4.19.2/sip-4.19.2.tar.gz
-  - curl -L -o /downloads/pyqt.tar.gz https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.8.2/PyQt5_gpl-5.8.2.tar.gz
-  - tar xzf /downloads/sip.tar.gz -C /builds --keep-newer-files
-  - tar xzf /downloads/pyqt.tar.gz -C /builds --keep-newer-files
-  - cd /builds/sip-4.19.2 && python configure.py && sudo make && sudo make install
-  - cd /builds/PyQt5_gpl-5.8.2 && python configure.py --confirm-license && sudo make && sudo make install
-  - cd /home/travis/build/JeffersonLab/PyPWA
-  - "pip install -e ."
+  - python setup.py develop
 script: "py.test --cov=PyPWA tests/ -vvvv"
 after_success:
   - ls -a
