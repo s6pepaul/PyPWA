@@ -35,7 +35,6 @@ before_install:
   - sudo apt-get install qt-latest
   - source /opt/qt55/bin/qt55-env.sh
 install:
-  - pwd
   - sudo mkdir -p /builds && sudo chmod a+rw /builds
   - sudo mkdir -p /downloads && sudo chmod a+rw /downloads
   - curl -L -o /downloads/sip.tar.gz http://sourceforge.net/projects/pyqt/files/sip/sip-4.19.2/sip-4.19.2.tar.gz
@@ -44,8 +43,7 @@ install:
   - tar xzf /downloads/pyqt.tar.gz -C /builds --keep-newer-files
   - cd /builds/sip-4.19.2 && python configure.py && sudo make && sudo make install
   - cd /builds/PyQt5_gpl-5.8.2 && python configure.py --confirm-license && sudo make && sudo make install
-  - pwd
-  - cd ~
+  - cd /home/travis/build/JeffersonLab/PyPWA
   - "pip install -e ."
 script: "py.test --cov=PyPWA tests/ -vvvv"
 after_success:
