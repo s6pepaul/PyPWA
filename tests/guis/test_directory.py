@@ -41,8 +41,9 @@ def dir_thread(text_box_handler):
 
 
 def test_text_box_output(dir_thread):
-        open('file2.txt', 'w+')
-        os.rename('file2.txt', 'file3.txt')
-        os.remove('file3.txt')
+    with open('file2.txt', 'w+'):
         time.sleep(.5)
+        os.rename('file2.txt', 'file3.txt')
+        time.sleep(.2)
         assert 'file2.txt' in dir_thread.toPlainText()
+        os.remove('file3.txt')
