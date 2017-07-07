@@ -99,7 +99,8 @@ setuptools.setup(
     test_suite="tests",
     entry_points=entry_points,
     keywords="PyPWA GeneralFitting Partial Wave Analysis Minimization",
-    install_requires=requires,
+    install_requires=['PyQt5'],
+    # requires,
     tests_require=tests,
     extras_require=extras,
     classifiers=[
