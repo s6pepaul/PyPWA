@@ -25,7 +25,6 @@ install:
   - "pip install pytest-runner --upgrade"
   - "pip install pytest-cov --upgrade"
   - "pip install pytest-logging --upgrade"
-  - python configure.py
   - python setup.py develop
 script: "py.test --cov=PyPWA tests/ -vvvv"
 after_success:

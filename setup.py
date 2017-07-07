@@ -50,7 +50,7 @@ requires = [
     "appdirs",       # Attempts to find data locations
     "fuzzywuzzy",    # Fuzzes the user input
     "watchdog",      # Tracks current directory for changes
-    "python-Levenshtein",
+    "python-Levenshtein"
 ]
 
 extras = dict()
