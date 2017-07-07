@@ -51,7 +51,7 @@ requires = [
     "fuzzywuzzy",    # Fuzzes the user input
     "watchdog",      # Tracks current directory for changes
     "python-Levenshtein",
-    "pyqt5-installer"
+    "python-qt5"
 ]
 
 extras = dict()
