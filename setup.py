@@ -60,7 +60,8 @@ tests = [
     'pytest-runner',
     "pytest-cov",
     "pytest-logging",
-    "pytest-qt"
+    "pytest-qt",
+    "qtbot"
 ]
 
 # Handle differences in setuptools versions.
@@ -100,7 +101,7 @@ setuptools.setup(
     entry_points=entry_points,
     keywords="PyPWA GeneralFitting Partial Wave Analysis Minimization",
     install_requires=['PyQt5'],
-    # requires,
+    requires=requires,
     tests_require=tests,
     extras_require=extras,
     classifiers=[
