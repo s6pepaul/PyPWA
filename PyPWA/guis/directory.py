@@ -124,5 +124,5 @@ class DirectoryView(QtWidgets.QWidget):
         )
         self.setLayout(vertical_box)
 
-    def __del__(self):
+    def stop(self):
         self.__observer.stop()

@@ -1,14 +1,17 @@
 import os
-import pytest
 import time
-from PyPWA.guis import directory
+
+import pytest
 from watchdog import observers
+
+from PyPWA.guis import directory
+
 
 @pytest.fixture()
 def directory_view():
     directory_view_object = directory.DirectoryView('.')
     yield directory_view_object
-    del directory_view_object
+    directory_view_object.stop()
 
 
 def test_directory_view(qtbot, directory_view):
