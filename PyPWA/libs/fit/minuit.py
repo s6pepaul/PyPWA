@@ -87,8 +87,8 @@ def minuit(
     translator = _Translator(parameters, likelihood)
     optimizer = _iminuit.Minuit(translator, **settings)
 
-    optimizer.set_strategy(strategy)
-    optimizer.set_up(set_up)
+    optimizer.strategy = strategy
+    optimizer.errordef = set_up
     optimizer.migrad(num_of_calls)
 
     return optimizer
