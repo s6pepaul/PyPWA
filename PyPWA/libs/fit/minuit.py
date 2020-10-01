@@ -76,11 +76,12 @@ def minuit(
     iminuit.Minuit
         The minuit object after the fit has been completed.
 
-    See Also
-    --------
-    iminuit's documentation : Should explain the various options that can
-        be passed to iminuit, and how to use the resulting object after
-        a fit has been completed/
+    Note
+    ----
+        See `Iminuit's documentation <https://iminuit.readthedocs.io/>`_
+        for more imformation, as it should explain the various options
+        that can be passed to iminuit, and how to use the resulting object
+        after a fit has been completed.
     """
     settings["forced_parameters"] = parameters
     settings["errordef"] = set_up

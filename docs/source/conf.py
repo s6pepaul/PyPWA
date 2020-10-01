@@ -8,8 +8,12 @@ import sphinx_rtd_theme
 extensions = [
     'sphinx.ext.mathjax', 'sphinx.ext.todo',
     'sphinx.ext.autodoc', 'sphinx_autodoc_typehints',
-    'sphinxcontrib.bibtex', 'recommonmark'
+    'sphinxcontrib.bibtex', 'recommonmark',
+    'sphinx.ext.napoleon', 'nbsphinx'
 ]
+
+# We put the returns in the docstring, this prevents duplication
+typehints_document_rtype = False
 
 
 # Basic file information

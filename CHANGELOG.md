@@ -7,9 +7,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/)
 
 ## [Unreleased]
 ### Added
+- Helper functions `pwa.pandas_to_numpy` to convert Pandas data types to
+  Numpy Structured Arrays, and `pwa.to_contiguous` to convert DataFrames
+  and Structured Arrays columns to contiguous arrays for quicker
+  processing and C/Fortran Support
+- New experimental file format ParticleGZ, a direct-to-memory file format
+  using pickle, csv, and Tar/GZ to compress data into a single archive for
+  easy use.
+- Reference documentation to the Read The Docs for the various modules
+  in PyPWA.
+- Initial examples section added.
 ### Changed
+- Users now have to option to request structured Numpy arrays or Pandas
+  DataFrames from `pwa.read` and `pwa.get_reader`
+- `pwa.cache` now defaults to intermediate caching, and has to be disabled
+  for use with caching files
+- Vectors str and repr field now output the mean of their theta, phi, as well
+  as particle id and mass if they are available.
+- Vectors now wrap individual numpy arrays instead of a single structured
+  array or DataFrame. This was done to improve performance of the vector
+  as well as to make it C contiguous.
 ### Removed
 ### Fixed
+- `pwa.write` would fail to write CSV Numpy Arrays
+- `pwa.write` would occasionally fail to detect DataFrames
+- Vectors would occasionally replace their fields with just their x values.
 
 ## [3.0.0] - 2020-6-4
 ### Added
