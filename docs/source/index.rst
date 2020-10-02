@@ -26,7 +26,10 @@ You can take a look at our code directly
    :caption: Examples
    :hidden:
 
+   examples/2Dgauss
    examples/demo_JPAC_sim
+   examples/demo_JPAC_fit
+   examples/demo_JPAC_pre
 
 .. toctree::
    :caption: References
