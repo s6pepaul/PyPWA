@@ -5,6 +5,12 @@ All changes important to the user will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/)
 
+## [3.1.1] - 2020-11-15
+### Fixes
+- The pipes are now managed more intelligently by the process module.
+  This should prevent TooManyOpenFiles errors from occurring with large
+  fitting runs.
+
 ## [3.1.0] - 2020-10-2
 ### Added
 - Helper functions `pwa.pandas_to_numpy` to convert Pandas data types to

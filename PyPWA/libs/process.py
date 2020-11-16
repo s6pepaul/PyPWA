@@ -228,7 +228,7 @@ def _get_pipes_for_communication(num_of_pipes: int, is_duplex: bool) ->_pipe:
     child = []
     for pipe_index in range(num_of_pipes):
         # Simplex pipes are: receiver, sender = multiprocess.Pipe(False)
-        left, right = Pipe(is_duplex)
+        left, right = _pipe_manager.get_pipe(is_duplex)
         main.append(left)
         child.append(right)
     return main, child
@@ -302,6 +302,7 @@ class _SmartProcess(Process):
             self.__kernel.setup()
         except Exception as error:
             self.__handle_error(error)
+            self.__connection.close()
             raise
         else:
             self.__loop()
@@ -319,6 +320,7 @@ class _SmartProcess(Process):
             value = self.__kernel.process(received_data)
         except Exception as error:
             self.__handle_error(error)
+            self.__connection.close()
             raise
         else:
             self.__connection.send(value)
@@ -335,3 +337,104 @@ class _SmartProcess(Process):
         self.__connection.send(ProcessCodes.ERROR)
         self.__connection.send(error)
         self.__connection.close()
+
+
+class FauxPipe:
+    """
+    Fake pipes
+    ==========
+
+    These wrap regular pipes and appear as regular pipes, but do not
+    allow you to delete the Pipes in the normal way. Instead, these pipes
+    keep track of whether or not they're currently being used by a process
+    so that they can be reused by future processes.
+    """
+
+    def __init__(self, pipe: Pipe, duplex: bool):
+        self.__pipe = pipe  # type: Pipe
+        self.__is_duplex = duplex
+        self.__currently_referenced = True
+
+    def terminate(self):
+        return self.__pipe.close()
+
+    def send(self, args):
+        self.__pipe.send(args)
+
+    def recv(self):
+        return self.__pipe.recv()
+
+    def reinitialize(self):
+        self.__currently_referenced = True
+
+    def close(self):
+        self.__currently_referenced = False
+
+    @property
+    def readable(self):
+        return self.__pipe.readable
+
+    @property
+    def closed(self):
+        return self.__pipe.closed
+
+    @property
+    def writable(self):
+        return self.__pipe.writable
+
+    @property
+    def is_duplex(self):
+        return self.__is_duplex
+
+    @property
+    def currently_referenced(self):
+        return self.__currently_referenced
+
+
+class _ManagePipes:
+    """
+    Fake Pipe tracker
+    =================
+
+    This stores a reference to all the Faux Pipes that have been created,
+    and when a new pipe is requested it'll return the first pipe that
+    isn't currently in use or create a new pair.
+
+    This should result in the number of Open pipes never getting too
+    excessive, since ideally if the Physicist that's using the processing
+    module will be using the `with` statement, which should dereference
+    all pipes upon exiting the scope of the with statement.
+    """
+
+    def __init__(self):
+        self.__referenced_pipes = []  # type: (FauxPipe, FauxPipe)
+
+    def get_pipe(self, is_duplex):
+        if is_duplex:
+            return self.__get_free_duplex_pipe()
+        else:
+            return self.__get_free_simplex_pipe()
+
+    def __get_free_duplex_pipe(self):
+        for (left, right) in self.__referenced_pipes:
+            if not left.currently_referenced and left.is_duplex:
+                left.reinitialize()
+                right.reinitialize()
+                return left, right
+
+        left, right = Pipe(True)
+        return FauxPipe(left, True), FauxPipe(right, True)
+
+    def __get_free_simplex_pipe(self):
+        for (left, right) in self.__referenced_pipes:
+            if not left.currently_referenced and not left.is_duplex:
+                left.reinitialize()
+                right.reinitialize()
+                return left, right
+
+        left, right = Pipe(False)
+        return FauxPipe(left, False), FauxPipe(right, False)
+
+
+# This should make it a sort of python Singleton knockoff
+_pipe_manager = _ManagePipes()
